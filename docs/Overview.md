@@ -14,7 +14,7 @@ Auto-email sent to the user who submitted it
 
 - Name
 - Email
-- Department/location
+- location/room
 - Issue category (dropdown: Hardware, Software, Network, Account/Login, Other)
 - Description (free text)
 - Device/asset info (optional — e.g., "Room 4 desktop")

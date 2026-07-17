@@ -11,7 +11,7 @@ export async function initDB() {
       id SERIAL PRIMARY KEY,
       name VARCHAR(255) NOT NULL,
       email VARCHAR(255) NOT NULL,
-      department VARCHAR(255) NOT NULL,
+      room VARCHAR(255) NOT NULL,
       category VARCHAR(255) NOT NULL,
       description VARCHAR(255) NOT NULL,
       device_info VARCHAR(255),
