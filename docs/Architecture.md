@@ -2,6 +2,33 @@
 
 React → API Layer → Express Router → Database → Express Response → React
 
+## Directory Trees
+
+```
+backend/
+├── src/
+│ ├── routes/
+│ │ └── tickets.js      — Defines ticket CRUD API endpoints (create, read, update, delete).
+│ ├── server.js         — Initializes Express, loads routes, runs database setup, and starts the server.
+│ ├── db.js             — Handles Neon database connection. Exports sql and initDB() for creating tables.
+│ └── mail.js           - Handles email notifications and contents
+├── .env                — Stores backend environment variables.
+└── package.json        — Backend dependencies and scripts.
+
+frontend/
+├── src/
+│ ├── api/
+│ │ └── tickets.js      — Handles API requests between the React app and backend ticket routes.
+│ ├── App.jsx           — Main React component containing the ticket form and UI logic.
+│ ├── index.css         — Tailwind CSS configuration and global styles.
+│ └── main.jsx          — React entry point. Mounts components into the browser DOM.
+├── .env                — Stores frontend environment variables.
+├── eslint.config.js    — ESLint configuration.
+├── index.html          — Main HTML template loaded by Vite.
+├── package.json        — Frontend dependencies and scripts.
+└── vite.config.js      — Vite development and build configuration.
+```
+
 ## Backend Request Flow
 
 1.  server.js boots Express and attaches routes (e.g. /tickets → tickets.js)
@@ -30,29 +57,3 @@ React → API Layer → Express Router → Database → Express Response → Rea
    - Handles errors
 
 7. React re-renders the interface based on the updated state.
-
-## Directory Trees
-
-```
-backend/
-├── src/
-│ ├── routes/
-│ │ └── tickets.js      — Defines ticket CRUD API endpoints (create, read, update, delete).
-│ ├── server.js         — Initializes Express, loads routes, runs database setup, and starts the server.
-│ └── db.js             — Handles Neon database connection. Exports sql and initDB() for creating tables.
-├── .env                — Stores backend environment variables.
-└── package.json        — Backend dependencies and scripts.
-
-frontend/
-├── src/
-│ ├── api/
-│ │ └── tickets.js      — Handles API requests between the React app and backend ticket routes.
-│ ├── App.jsx           — Main React component containing the ticket form and UI logic.
-│ ├── index.css         — Tailwind CSS configuration and global styles.
-│ └── main.jsx          — React entry point. Mounts components into the browser DOM.
-├── .env                — Stores frontend environment variables.
-├── eslint.config.js    — ESLint configuration.
-├── index.html          — Main HTML template loaded by Vite.
-├── package.json        — Frontend dependencies and scripts.
-└── vite.config.js      — Vite development and build configuration.
-```
