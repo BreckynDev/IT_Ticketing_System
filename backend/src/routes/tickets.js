@@ -5,7 +5,7 @@ const router = Router();
 
 // Create Ticket
 router.post('/', async (req, res) => {
-  const { name, email, room, category, description, device_info } = req.body;
+  const { name, email, room, category, description} = req.body;
 
   if (!name || !email || !room || !category || !description) {
     return res.status(400).json({ success: false, message: "Missing required fields" })
@@ -13,8 +13,8 @@ router.post('/', async (req, res) => {
 
   try {
     const ticket = await sql`
-        INSERT INTO tickets (name, email, room, category, description, device_info)
-        VALUES(${name}, ${email}, ${room}, ${category}, ${description}, ${device_info})
+        INSERT INTO tickets (name, email, room, category, description)
+        VALUES(${name}, ${email}, ${room}, ${category}, ${description})
         RETURNING *
     `
     res.status(201).json({ success: true, data: ticket[0]})

@@ -14,7 +14,6 @@ export async function initDB() {
       room VARCHAR(255) NOT NULL,
       category VARCHAR(255) NOT NULL,
       description VARCHAR(255) NOT NULL,
-      device_info VARCHAR(255),
       priority VARCHAR(255),
       status VARCHAR(255) DEFAULT 'open',
       internal_notes VARCHAR(255),
