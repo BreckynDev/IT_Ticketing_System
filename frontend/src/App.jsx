@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { createTicket } from './API/tickets'
+import { createTicket } from './api/tickets'
 import { motion } from "framer-motion"
 
 

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { sql } from "../db.js"
+import { sendTicketEmail } from '../mail.js';
 
 const router = Router();
 
@@ -17,7 +18,9 @@ router.post('/', async (req, res) => {
         VALUES(${name}, ${email}, ${room}, ${category}, ${description})
         RETURNING *
     `
-    res.status(201).json({ success: true, data: ticket[0]})
+   await sendTicketEmail(req.body);
+    
+    res.status(201).json({ success: true, message: "Ticket created and email sent!" })
 
     } catch (error) {
         console.error("Error creating ticket: ", error)
@@ -69,7 +72,7 @@ router.patch('/:id', async (req, res) => {
         SELECT id FROM tickets WHERE id = ${id}`
 
         if (ticket.length === 0) {
-            return res.status(404).json({ success: false, message: "Ticket not found" });
+            return res.status(404).json({ success: false, message: "Ticket not found" })
         }
 
         const update = await sql`
@@ -85,7 +88,7 @@ router.patch('/:id', async (req, res) => {
 
     } catch (error) {
         console.error("Error in updating ticket: ", error);
-        res.status(500).json({ success: false, message: "Internal Server Error" });
+        res.status(500).json({ success: false, message: "Internal Server Error" })
     }
 
 })
@@ -99,17 +102,17 @@ router.delete('/:id', async (req, res) => {
         SELECT id FROM tickets WHERE id = ${id}`
 
         if (ticket.length === 0) {
-            return res.status(404).json({ success: false, message: "Ticket not found" });
+            return res.status(404).json({ success: false, message: "Ticket not found" })
         }
 
         await sql`DELETE FROM tickets WHERE id = ${id} RETURNING *`
 
-        res.status(200).json({ success: true, message: "Ticket Deleted"});
+        res.status(200).json({ success: true, message: "Ticket Deleted"})
     } catch (error) {
         console.error("Error deleting ticket: ", error);
-        res.status(500).json({ success: false, message: "Internal Server Error" });
+        res.status(500).json({ success: false, message: "Internal Server Error" })
     }
 
 })
 
-export default router;
+export default router
