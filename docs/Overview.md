@@ -35,7 +35,6 @@ tickets
 ├── department
 ├── category (VARCHAR — validated in Express, not a DB enum)
 ├── description
-├── device_info (nullable/optional)
 ├── priority (nullable until set)
 ├── status (default: 'open')
 ├── internal_notes
