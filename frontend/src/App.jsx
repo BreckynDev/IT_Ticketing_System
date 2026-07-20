@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { createTicket } from './api/tickets'
+import { motion } from "framer-motion"
 
 
 function App() {
@@ -8,6 +9,9 @@ function App() {
   const [room, setRoom] = useState('')
   const [category, setCategory] = useState('')
   const [description, setDescription] = useState('')
+
+  // Page Status
+  const [submitted, setSubmitted] = useState(false)
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -18,10 +22,51 @@ function App() {
       setRoom('')
       setCategory('')
       setDescription('')
+      setSubmitted(true)
     } catch (error) {
       console.error(error)
     }
   } 
+
+  // Success Pop-Up
+if (submitted) {
+  return (
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center">
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        className="bg-white rounded-2xl shadow-2xl p-8 text-center max-w-sm"
+      >
+        <div className="text-5xl mb-4">
+          ✓
+        </div>
+
+        <h2 className="text-2xl font-bold text-gray-900">
+          Ticket Submitted!
+        </h2>
+
+        <p className="text-gray-500 mt-2">
+          Your IT support request has been received.
+        </p>
+
+        <button
+          onClick={() => {
+            setSubmitted(false)
+            setName('')
+            setEmail('')
+            setRoom('')
+            setCategory('')
+            setDescription('')
+          }}
+          className="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg font-semibold shadow-md hover:bg-blue-700 hover:shadow-lg transition"
+        >
+          Create Another Ticket
+        </button>
+
+      </motion.div>
+    </div>
+  )
+}
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
