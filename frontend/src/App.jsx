@@ -6,7 +6,7 @@ function App() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [room, setRoom] = useState('')
-  const [category, setCategory] = useState('Hardware')
+  const [category, setCategory] = useState('')
   const [description, setDescription] = useState('')
 
   async function handleSubmit(event) {
@@ -16,7 +16,7 @@ function App() {
       setName('')
       setEmail('')
       setRoom('')
-      setCategory('Hardware')
+      setCategory('')
       setDescription('')
     } catch (error) {
       console.error(error)
@@ -24,45 +24,83 @@ function App() {
   } 
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <label>Enter name: </label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+      <form 
+      className="flex flex-col w-full p-8 gap-4 max-w-md rounded-2xl shadow-2xl border border-gray-200 bg-[#F4F6F8]" 
+      onSubmit={handleSubmit}>
 
-        <label>Enter email: </label>
-        <input
-          type="text"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <div>
+          <h2 className="text-3xl font-bold text-gray-900">
+            Ticket Form
+          </h2>
+          <p className="text-gray-500 mt-1">
+            Submit an IT support request.
+          </p>
+        </div>
 
-        <label>Enter Room: </label>
-        <input
-          type="text"
-          value={room}
-          onChange={(e) => setRoom(e.target.value)}
-        />
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">Enter Name: </label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="p-2 w-full border border-gray-300 rounded-lg transition focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+          />
+        </div>
 
-        <label>Category: </label>
-        <select value={category} onChange={(e) => setCategory(e.target.value)}>
-          <option>Hardware</option>
-          <option>Software</option>
-          <option>Network</option>
-          <option>Account/Login</option>
-          <option>Other</option>
-        </select>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">Enter Email: </label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="p-2 w-full border border-gray-300 rounded-lg transition focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+          />
+        </div>
 
-        <label>Enter description: </label>
-        <input
-          type="text"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <button type="submit">Submit Ticket</button>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">Enter Room: </label>
+          <input
+            type="text"
+            value={room}
+            onChange={(e) => setRoom(e.target.value)}
+            className="p-2 w-full border border-gray-300 rounded-lg transition focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">Select Category: </label>
+          <select 
+            value={category} 
+            onChange={(e) => setCategory(e.target.value)}
+            className="p-2 w-full border border-gray-300 rounded-lg transition focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+          >
+            <option></option>
+            <option>Hardware</option>
+            <option>Software</option>
+            <option>Network</option>
+            <option>Account/Login</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700">Enter description: </label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={3}
+            className="p-2 w-full border border-gray-300 rounded-lg transition focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+          />
+        </div>
+
+        <button 
+          type="submit"
+          className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold shadow-md hover:bg-blue-700 hover:shadow-lg transition"
+        > 
+          Submit Ticket
+        </button>
+        
       </form>
     </div>
   )
