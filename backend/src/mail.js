@@ -27,7 +27,7 @@ export const getTicketEmailTemplate = (data) => {
         <div style="font-family: sans-serif; color: #333;">
             <h2>New Ticket</h2>
             <p><strong>From:</strong> ${data.name}</p>
-            <p><strong>Email:</strong> (${data.email}</p>
+            <p><strong>Email:</strong> ${data.email}</p>
             <p><strong>Room:</strong> ${data.room}</p>
             <p><strong>Category:</strong> ${data.category}</p>
             <p><strong>Description:</strong> ${data.description}</p>
