@@ -11,6 +11,7 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASSWORD
   }
 })
+
 export const sendTicketEmail = async (ticketData) => {
     return await transporter.sendMail({
         from: '"IT Support Desk" <' + process.env.EMAIL_USER + '>',
