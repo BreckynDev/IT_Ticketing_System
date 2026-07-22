@@ -12,19 +12,26 @@ function App() {
 
   // Page Status
   const [submitted, setSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  async function handleSubmit(event) {
-    event.preventDefault()
-    try {
-      await createTicket ({ name, email, room, category, description})
+  function resetForm() {
       setName('')
       setEmail('')
       setRoom('')
       setCategory('')
       setDescription('')
+  }
+  async function handleSubmit(event) {
+    event.preventDefault()
+    setIsSubmitting(true)
+    try {
+      await createTicket ({ name, email, room, category, description})
       setSubmitted(true)
+      resetForm()
     } catch (error) {
       console.error(error)
+    } finally {
+      setIsSubmitting(false)
     }
   } 
 
@@ -51,12 +58,8 @@ if (submitted) {
 
         <button
           onClick={() => {
+            resetForm()
             setSubmitted(false)
-            setName('')
-            setEmail('')
-            setRoom('')
-            setCategory('')
-            setDescription('')
           }}
           className="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg font-semibold shadow-md hover:bg-blue-700 hover:shadow-lg transition"
         >
@@ -87,6 +90,7 @@ if (submitted) {
           <label className="text-sm font-medium text-gray-700">Enter Name: </label>
           <input
             type="text"
+            placeholder="John Smith"
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="p-2 w-full border border-gray-300 rounded-lg transition focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
@@ -97,6 +101,7 @@ if (submitted) {
           <label className="text-sm font-medium text-gray-700">Enter Email: </label>
           <input
             type="email"
+            placeholder="john.smith@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="p-2 w-full border border-gray-300 rounded-lg transition focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
@@ -107,6 +112,7 @@ if (submitted) {
           <label className="text-sm font-medium text-gray-700">Enter Room: </label>
           <input
             type="text"
+            placeholder="201 or Kitten"
             value={room}
             onChange={(e) => setRoom(e.target.value)}
             className="p-2 w-full border border-gray-300 rounded-lg transition focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
@@ -138,14 +144,29 @@ if (submitted) {
             className="p-2 w-full border border-gray-300 rounded-lg transition focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
           />
         </div>
-
         <button 
           type="submit"
-          disabled={!name || !email || !room || !category || !description}
-          className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold shadow-md hover:bg-blue-700 hover:shadow-lg transition disabled:bg-gray-400 disabled:shadow-none disabled:cursor-not-allowed disabled:opacity-60"
-        > 
-          Submit Ticket
+          disabled={(!name || !email || !room || !category || !description) || isSubmitting}
+          className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold shadow-md hover:bg-blue-700 hover:shadow-lg transition disabled:bg-gray-400 disabled:shadow-none disabled:cursor-not-allowed disabled:opacity-60 flex items-center justify-center gap-2"
+        >
+        {isSubmitting ? (
+          <>
+            <motion.div
+              className="w-5 h-5 rounded-full border-2 border-white border-t-transparent"
+              animate={{ rotate: 360 }}
+              transition={{
+                repeat: Infinity,
+                duration: 1,
+                ease: "linear",
+              }}
+            />
+            Submitting...
+          </>
+        ) : (
+          "Submit Ticket"
+        )}
         </button>
+        
         
       </form>
     </div>
