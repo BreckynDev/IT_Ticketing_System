@@ -22,6 +22,9 @@ frontend/
 │ ├── App.jsx           — Main React component containing the ticket form and UI logic.
 │ ├── index.css         — Tailwind CSS configuration and global styles.
 │ └── main.jsx          — React entry point. Mounts components into the browser DOM.
+├── pages
+│  ├── Admin.jsx        - Admin Page
+│  └── Form.jsx         - User Facing ticket form
 ├── .env                — Stores frontend environment variables.
 ├── eslint.config.js    — ESLint configuration.
 ├── index.html          — Main HTML template loaded by Vite.
