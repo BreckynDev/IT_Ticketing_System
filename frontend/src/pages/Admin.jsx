@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { getTickets, updateTicket as updateTicketApi, deleteTicket } from '../api/tickets'
+import { getTickets, updateTicket as updateTicketApi, deleteTicket, loginAdmin, getToken } from '../api/tickets'
 
 const PRIORITY_OPTIONS = ['Low', 'Medium', 'High', 'Urgent']
 const STATUS_OPTIONS = ['Open', 'Closed']
@@ -41,47 +41,36 @@ function Admin() {
     status: '',
     created_at: '',
   })
+  const [authed, setAuthed] = useState(() => Boolean(getToken()))
+  const [passkey, setPasskey] = useState('')
+  const [authError, setAuthError] = useState('')
+  const [loggingIn, setLoggingIn] = useState(false)
 
   useEffect(() => {
+    if (!authed) {
+      setLoading(false)
+      return
+    }
+
     async function loadTickets() {
+      setLoading(true)
       try {
         const data = await getTickets()
         setTicketData(data)
         setOriginalData(Object.fromEntries(data.map((t) => [t.id || t._id, t])))
       } catch (error) {
-        console.log(error)
+        if (error.message === 'UNAUTHORIZED') {
+          setAuthed(false)
+        } else {
+          console.error(error)
+        }
       } finally {
         setLoading(false)
       }
     }
 
     loadTickets()
-  }, [])
-
-  function updateTicket(id, changes) {
-    setTicketData((prev) =>
-      prev.map((ticket) =>
-        (ticket.id || ticket._id) === id ? { ...ticket, ...changes } : ticket
-      )
-    )
-  }
-
- async function handleDelete(id) {
-  try {
-      await deleteTicket(id)
-      setTicketData((prev) =>
-        prev.filter((ticket) =>
-          (ticket.id || ticket._id) !== id
-        )
-      )
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  function handleFilterChange(field, value) {
-    setFilters((prev) => ({ ...prev, [field]: value }))
-  }
+  }, [authed])
 
   const pendingIds = useMemo(() => {
     const ids = new Set()
@@ -96,6 +85,88 @@ function Admin() {
     () => [...new Set(ticketData.map((t) => t.category).filter(Boolean))],
     [ticketData]
   )
+
+  async function handlePasskeySubmit(e) {
+    e.preventDefault()
+    setAuthError('')
+    setLoggingIn(true)
+    try {
+      await loginAdmin(passkey)
+      setPasskey('')
+      setAuthed(true)
+    } catch (error) {
+      setAuthError(error.message || 'Invalid passkey')
+    } finally {
+      setLoggingIn(false)
+    }
+  }
+
+  if (!authed) {
+    return (
+      <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
+        <form
+          onSubmit={handlePasskeySubmit}
+          className="bg-white rounded-xl shadow-lg w-full max-w-sm p-6 flex flex-col gap-4"
+        >
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">Admin Access</h2>
+            <p className="text-sm text-gray-500 mt-1">Enter the admin passkey to continue.</p>
+          </div>
+
+          <input
+            type="password"
+            value={passkey}
+            onChange={(e) => setPasskey(e.target.value)}
+            placeholder="Passkey"
+            autoFocus
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+
+          {authError && (
+            <p className="text-xs text-red-600 font-medium">{authError}</p>
+          )}
+
+          <button
+            type="submit"
+            disabled={!passkey || loggingIn}
+            className="bg-blue-600 text-white py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 disabled:bg-gray-300"
+          >
+            {loggingIn ? 'Checking...' : 'Unlock'}
+          </button>
+        </form>
+      </div>
+    )
+  }
+
+  function updateTicket(id, changes) {
+    setTicketData((prev) =>
+      prev.map((ticket) =>
+        (ticket.id || ticket._id) === id ? { ...ticket, ...changes } : ticket
+      )
+    )
+  }
+
+  async function handleDelete(id) {
+    try {
+      await deleteTicket(id)
+      setTicketData((prev) =>
+        prev.filter((ticket) => (ticket.id || ticket._id) !== id)
+      )
+      if (selectedId === id) {
+        setSelectedId(null)
+      }
+    } catch (error) {
+      if (error.message === 'UNAUTHORIZED') {
+        setAuthed(false)
+      } else {
+        console.error(error)
+      }
+    }
+  }
+
+  function handleFilterChange(field, value) {
+    setFilters((prev) => ({ ...prev, [field]: value }))
+  }
 
   async function handleSave() {
     setSaving(true)
@@ -121,7 +192,11 @@ function Admin() {
         return next
       })
     } catch (error) {
-      console.log(error)
+      if (error.message === 'UNAUTHORIZED') {
+        setAuthed(false)
+      } else {
+        console.error(error)
+      }
     } finally {
       setSaving(false)
     }
