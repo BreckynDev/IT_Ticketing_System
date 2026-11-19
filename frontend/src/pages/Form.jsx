@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { createTicket } from '../api/tickets'
 import { motion } from "framer-motion"
 
+const fieldClass =
+  'w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition hover:border-zinc-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
 
 function Form() {
   const [name, setName] = useState('')
@@ -38,21 +40,21 @@ function Form() {
   // Success Pop-Up
 if (submitted) {
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center">
+    <div className="fixed inset-0 flex items-center justify-center bg-zinc-900/40 p-4 backdrop-blur-sm">
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="bg-white rounded-2xl shadow-2xl p-8 text-center max-w-sm"
+        className="w-full max-w-sm rounded-2xl bg-white p-8 text-center shadow-2xl ring-1 ring-zinc-200"
       >
-        <div className="text-5xl mb-4">
+        <div className="mb-3 text-4xl text-emerald-600">
           ✓
         </div>
 
-        <h2 className="text-2xl font-bold text-gray-900">
-          Ticket Submitted!
+        <h2 className="text-xl font-semibold tracking-tight text-zinc-900">
+          Ticket submitted
         </h2>
 
-        <p className="text-gray-500 mt-2">
+        <p className="mt-1.5 text-sm text-zinc-500">
           Your IT support request has been received.
         </p>
 
@@ -61,9 +63,9 @@ if (submitted) {
             resetForm()
             setSubmitted(false)
           }}
-          className="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg font-semibold shadow-md hover:bg-blue-700 hover:shadow-lg transition"
+          className="mt-6 w-full rounded-lg bg-zinc-900 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-zinc-800"
         >
-          Create Another Ticket
+          Create another ticket
         </button>
 
       </motion.div>
@@ -72,87 +74,89 @@ if (submitted) {
 }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-50 px-4 py-10">
       <form 
-      className="flex flex-col w-full p-8 gap-4 max-w-md rounded-2xl shadow-2xl border border-gray-200 bg-[#F4F6F8]" 
+      className="flex w-full max-w-sm flex-col gap-4 rounded-2xl bg-white p-6 shadow-xl ring-1 ring-zinc-200" 
       onSubmit={handleSubmit}>
 
-        <div>
-          <h2 className="text-3xl font-bold text-gray-900">
-            Ticket Form
+        <div className="mb-1">
+          <h2 className="text-2xl font-semibold tracking-tight text-zinc-900">
+            Ticket form
           </h2>
-          <p className="text-gray-500 mt-1">
+          <p className="mt-1 text-sm text-zinc-500">
             Submit an IT support request.
           </p>
         </div>
 
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">Enter Name: </label>
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium text-zinc-700">Name</label>
           <input
             type="text"
             placeholder="John Smith"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="p-2 w-full border border-gray-300 rounded-lg transition focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className={fieldClass}
           />
         </div>
 
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">Enter Email: </label>
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium text-zinc-700">Email</label>
           <input
             type="email"
             placeholder="john.smith@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="p-2 w-full border border-gray-300 rounded-lg transition focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className={fieldClass}
           />
         </div>
 
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">Enter Room: </label>
-          <input
-            type="text"
-            placeholder="123"
-            value={room}
-            onChange={(e) => setRoom(e.target.value)}
-            className="p-2 w-full border border-gray-300 rounded-lg transition focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-          />
+        <div className="grid grid-cols-2 gap-3">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-zinc-700">Room</label>
+            <input
+              type="text"
+              placeholder="123"
+              value={room}
+              onChange={(e) => setRoom(e.target.value)}
+              className={fieldClass}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-zinc-700">Category</label>
+            <select 
+              value={category} 
+              onChange={(e) => setCategory(e.target.value)}
+              className={fieldClass}
+            >
+              <option></option>
+              <option>Hardware</option>
+              <option>Software</option>
+              <option>Network</option>
+              <option>Account/Login</option>
+              <option>Other</option>
+            </select>
+          </div>
         </div>
 
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">Select Category: </label>
-          <select 
-            value={category} 
-            onChange={(e) => setCategory(e.target.value)}
-            className="p-2 w-full border border-gray-300 rounded-lg transition focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-          >
-            <option></option>
-            <option>Hardware</option>
-            <option>Software</option>
-            <option>Network</option>
-            <option>Account/Login</option>
-            <option>Other</option>
-          </select>
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">Enter description: </label>
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium text-zinc-700">Description</label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
-            className="p-2 w-full border border-gray-300 rounded-lg transition focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className={`${fieldClass} resize-none`}
           />
         </div>
         <button 
           type="submit"
           disabled={(!name || !email || !room || !category || !description) || isSubmitting}
-          className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold shadow-md hover:bg-blue-700 hover:shadow-lg transition disabled:bg-gray-400 disabled:shadow-none disabled:cursor-not-allowed disabled:opacity-60 flex items-center justify-center gap-2"
+          className="mt-1 flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-900 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-400 disabled:shadow-none"
         >
         {isSubmitting ? (
           <>
             <motion.div
-              className="w-5 h-5 rounded-full border-2 border-white border-t-transparent"
+              className="h-4 w-4 rounded-full border-2 border-white border-t-transparent"
               animate={{ rotate: 360 }}
               transition={{
                 repeat: Infinity,
@@ -163,19 +167,17 @@ if (submitted) {
             Submitting...
           </>
         ) : (
-          "Submit Ticket"
+          "Submit ticket"
         )}
         </button>
-        
-        <div className="text-center pt-1">
-            <a
-              href="/admin"
-              className="text-xs text-gray-400 hover:text-gray-600 transition"
-            >
-              Admin Portal
-            </a>
-          </div>
       </form>
+
+      <a
+        href="/admin"
+        className="mt-4 text-xs text-zinc-400 transition hover:text-zinc-600"
+      >
+        Admin portal
+      </a>
     </div>
   )
 }

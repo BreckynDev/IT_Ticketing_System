@@ -6,6 +6,24 @@ const STATUS_OPTIONS = ['Open', 'Closed']
 
 const TRACKED_FIELDS = ['status', 'priority', 'internal_notes']
 
+// Style helpers (classes only, no logic)
+const PRIORITY_STYLES = {
+  Low: 'text-zinc-600',
+  Medium: 'text-amber-700',
+  High: 'text-orange-700',
+  Urgent: 'text-red-700 font-semibold',
+}
+const STATUS_STYLES = {
+  Open: 'text-emerald-700',
+  Closed: 'text-zinc-500',
+}
+
+const filterClass =
+  'w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-800 placeholder:text-zinc-400 shadow-sm outline-none transition hover:border-zinc-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
+
+const rowSelectClass =
+  'rounded-md border border-zinc-200 bg-white px-2 py-1 text-xs font-medium outline-none transition hover:border-zinc-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
+
 function formatDate(value) {
   if (!value) return '—'
   return new Date(value).toLocaleDateString([], {
@@ -103,14 +121,14 @@ function Admin() {
 
   if (!authed) {
     return (
-      <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-50 p-4">
         <form
           onSubmit={handlePasskeySubmit}
-          className="bg-white rounded-xl shadow-lg w-full max-w-sm p-6 flex flex-col gap-4"
+          className="flex w-full max-w-sm flex-col gap-5 rounded-2xl bg-white p-8 shadow-xl ring-1 ring-zinc-200"
         >
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Admin Access</h2>
-            <p className="text-sm text-gray-500 mt-1">Enter the admin passkey to continue.</p>
+            <h2 className="text-xl font-semibold tracking-tight text-zinc-900">Admin access</h2>
+            <p className="mt-1 text-sm text-zinc-500">Enter the admin passkey to continue.</p>
           </div>
 
           <input
@@ -119,17 +137,17 @@ function Admin() {
             onChange={(e) => setPasskey(e.target.value)}
             placeholder="Passkey"
             autoFocus
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            className={filterClass}
           />
 
           {authError && (
-            <p className="text-xs text-red-600 font-medium">{authError}</p>
+            <p className="text-sm font-medium text-red-600">{authError}</p>
           )}
 
           <button
             type="submit"
             disabled={!passkey || loggingIn}
-            className="bg-blue-600 text-white py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 disabled:bg-gray-300"
+            className="rounded-lg bg-zinc-900 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-400"
           >
             {loggingIn ? 'Checking...' : 'Unlock'}
           </button>
@@ -204,7 +222,7 @@ function Admin() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen text-lg text-gray-600">
+      <div className="flex min-h-screen items-center justify-center bg-zinc-50 text-sm text-zinc-500">
         Loading tickets...
       </div>
     )
@@ -230,200 +248,207 @@ function Admin() {
   )
 
   return (
-    <div className="p-8 pb-20 max-w-7xl mx-auto min-h-screen bg-gray-50 font-sans">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Admin Dashboard</h2>
+    <div className="min-h-screen bg-zinc-50">
+      <div className="mx-auto max-w-7xl p-8 pb-24 font-sans text-zinc-900">
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold tracking-tight text-zinc-900">Admin dashboard</h2>
+          <p className="mt-1 text-sm text-zinc-500">
+            {filteredTickets.length} of {ticketData.length} tickets
+          </p>
+        </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2 mb-4">
-        <input
-          type="text"
-          placeholder="Name"
-          value={filters.name}
-          onChange={(e) => handleFilterChange('name', e.target.value)}
-          className="border border-gray-200 rounded-md text-xs px-2 py-1.5 bg-white"
-        />
-        <select
-          value={filters.category}
-          onChange={(e) => handleFilterChange('category', e.target.value)}
-          className="border border-gray-200 rounded-md text-xs px-2 py-1.5 bg-white"
-        >
-          <option value="">All Categories</option>
-          {categoryOptions.map((c) => (
-            <option key={c} value={c}>{c}</option>
-          ))}
-        </select>
-        <input
-          type="text"
-          placeholder="Email"
-          value={filters.email}
-          onChange={(e) => handleFilterChange('email', e.target.value)}
-          className="border border-gray-200 rounded-md text-xs px-2 py-1.5 bg-white"
-        />
-        <input
-          type="text"
-          placeholder="Room"
-          value={filters.room}
-          onChange={(e) => handleFilterChange('room', e.target.value)}
-          className="border border-gray-200 rounded-md text-xs px-2 py-1.5 bg-white"
-        />
-        <select
-          value={filters.priority}
-          onChange={(e) => handleFilterChange('priority', e.target.value)}
-          className="border border-gray-200 rounded-md text-xs px-2 py-1.5 bg-white"
-        >
-          <option value="">All Priorities</option>
-          {PRIORITY_OPTIONS.map((p) => (
-            <option key={p} value={p}>{p}</option>
-          ))}
-        </select>
-        <select
-          value={filters.status}
-          onChange={(e) => handleFilterChange('status', e.target.value)}
-          className="border border-gray-200 rounded-md text-xs px-2 py-1.5 bg-white"
-        >
-          <option value="">All Statuses</option>
-          {STATUS_OPTIONS.map((s) => (
-            <option key={s} value={s}>{s}</option>
-          ))}
-        </select>
-        <input
-          type="text"
-          placeholder="Created"
-          value={filters.created_at}
-          onChange={(e) => handleFilterChange('created_at', e.target.value)}
-          className="border border-gray-200 rounded-md text-xs px-2 py-1.5 bg-white"
-        />
-      </div>
-
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
-        <table className="min-w-full text-xs text-left">
-          <thead className="bg-gray-100 text-gray-700 uppercase text-[10px] tracking-wider">
-            <tr>
-              <th className="px-3 py-2">Name</th>
-              <th className="px-3 py-2">Category</th>
-              <th className="px-3 py-2">Email</th>
-              <th className="px-3 py-2">Room</th>
-              <th className="px-3 py-2">Priority</th>
-              <th className="px-3 py-2">Status</th>
-              <th className="px-3 py-2">Created</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {filteredTickets.map((ticket) => {
-              const id = ticket.id || ticket._id
-              return (
-                <tr
-                  key={id}
-                  onClick={() => setSelectedId(id)}
-                  className="hover:bg-gray-50 align-top cursor-pointer"
-                >
-                  <td className="px-3 py-1.5 font-semibold text-gray-900">{ticket.name}</td>
-                  <td className="px-3 py-1.5">
-                    <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider">
-                      {ticket.category}
-                    </span>
-                  </td>
-                  <td className="px-3 py-1.5 text-gray-600">{ticket.email}</td>
-                  <td className="px-3 py-1.5 text-gray-600">{ticket.room}</td>
-                  <td className="px-3 py-1.5" onClick={(e) => e.stopPropagation()}>
-                    <select
-                      value={ticket.priority || ''}
-                      onChange={(e) => updateTicket(id, { priority: e.target.value })}
-                      className="border border-gray-200 rounded-md text-[11px] px-1.5 py-0.5 bg-white"
-                    >
-                      <option value="" disabled>Select</option>
-                      {PRIORITY_OPTIONS.map((p) => (
-                        <option key={p} value={p}>{p}</option>
-                      ))}
-                    </select>
-                  </td>
-                  <td className="px-3 py-1.5" onClick={(e) => e.stopPropagation()}>
-                    <select
-                      value={ticket.status || 'Open'}
-                      onChange={(e) => updateTicket(id, { status: e.target.value })}
-                      className="border border-gray-200 rounded-md text-[11px] px-1.5 py-0.5 bg-white"
-                    >
-                      {STATUS_OPTIONS.map((s) => (
-                        <option key={s} value={s}>{s}</option>
-                      ))}
-                    </select>
-                  </td>
-                  <td className="px-3 py-1.5 text-gray-500 whitespace-nowrap">
-                    {formatDate(ticket.created_at)}
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
-
-      {selectedTicket && (
-        <div
-          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
-          onClick={() => setSelectedId(null)}
-        >
-          <div
-            className="bg-white rounded-xl shadow-lg w-full max-w-lg p-6 relative"
-            onClick={(e) => e.stopPropagation()}
+        <div className="mb-5 grid grid-cols-2 gap-2 md:grid-cols-4 lg:grid-cols-7">
+          <input
+            type="text"
+            placeholder="Name"
+            value={filters.name}
+            onChange={(e) => handleFilterChange('name', e.target.value)}
+            className={filterClass}
+          />
+          <select
+            value={filters.category}
+            onChange={(e) => handleFilterChange('category', e.target.value)}
+            className={filterClass}
           >
-            <button
-              onClick={() => setSelectedId(null)}
-              className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-xl leading-none"
-              aria-label="Close"
+            <option value="">All categories</option>
+            {categoryOptions.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+          <input
+            type="text"
+            placeholder="Email"
+            value={filters.email}
+            onChange={(e) => handleFilterChange('email', e.target.value)}
+            className={filterClass}
+          />
+          <input
+            type="text"
+            placeholder="Room"
+            value={filters.room}
+            onChange={(e) => handleFilterChange('room', e.target.value)}
+            className={filterClass}
+          />
+          <select
+            value={filters.priority}
+            onChange={(e) => handleFilterChange('priority', e.target.value)}
+            className={filterClass}
+          >
+            <option value="">All priorities</option>
+            {PRIORITY_OPTIONS.map((p) => (
+              <option key={p} value={p}>{p}</option>
+            ))}
+          </select>
+          <select
+            value={filters.status}
+            onChange={(e) => handleFilterChange('status', e.target.value)}
+            className={filterClass}
+          >
+            <option value="">All statuses</option>
+            {STATUS_OPTIONS.map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+          <input
+            type="text"
+            placeholder="Created"
+            value={filters.created_at}
+            onChange={(e) => handleFilterChange('created_at', e.target.value)}
+            className={filterClass}
+          />
+        </div>
+
+        <div className="overflow-x-auto rounded-xl bg-white shadow-sm ring-1 ring-zinc-200">
+          <table className="min-w-full text-left text-sm">
+            <thead className="border-b border-zinc-200 bg-zinc-50 text-xs text-zinc-500">
+              <tr>
+                <th className="px-4 py-3 font-medium">Name</th>
+                <th className="px-4 py-3 font-medium">Category</th>
+                <th className="px-4 py-3 font-medium">Email</th>
+                <th className="px-4 py-3 font-medium">Room</th>
+                <th className="px-4 py-3 font-medium">Priority</th>
+                <th className="px-4 py-3 font-medium">Status</th>
+                <th className="px-4 py-3 font-medium">Created</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-zinc-100">
+              {filteredTickets.map((ticket) => {
+                const id = ticket.id || ticket._id
+                return (
+                  <tr
+                    key={id}
+                    onClick={() => setSelectedId(id)}
+                    className="cursor-pointer align-middle transition-colors hover:bg-zinc-50"
+                  >
+                    <td className="px-4 py-3 font-medium text-zinc-900">{ticket.name}</td>
+                    <td className="px-4 py-3">
+                      <span className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-700">
+                        {ticket.category}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-zinc-600">{ticket.email}</td>
+                    <td className="px-4 py-3 text-zinc-600">{ticket.room}</td>
+                    <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                      <select
+                        value={ticket.priority || ''}
+                        onChange={(e) => updateTicket(id, { priority: e.target.value })}
+                        className={`${rowSelectClass} ${PRIORITY_STYLES[ticket.priority] || 'text-zinc-400'}`}
+                      >
+                        <option value="" disabled>Select</option>
+                        {PRIORITY_OPTIONS.map((p) => (
+                          <option key={p} value={p}>{p}</option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                      <select
+                        value={ticket.status || 'Open'}
+                        onChange={(e) => updateTicket(id, { status: e.target.value })}
+                        className={`${rowSelectClass} ${STATUS_STYLES[ticket.status || 'Open']}`}
+                      >
+                        {STATUS_OPTIONS.map((s) => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-3 tabular-nums text-zinc-500">
+                      {formatDate(ticket.created_at)}
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        {selectedTicket && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/40 p-4 backdrop-blur-sm"
+            onClick={() => setSelectedId(null)}
+          >
+            <div
+              className="relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl ring-1 ring-zinc-200"
+              onClick={(e) => e.stopPropagation()}
             >
-              ×
-            </button>
-
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 pr-6">
-              {selectedTicket.name}
-            </h3>
-
-            <div className="mb-4">
-              <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">
-                Description
-              </p>
-              <p className="text-sm text-gray-700 leading-relaxed">
-                {selectedTicket.description}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">
-                Notes
-              </p>
-              <textarea
-                value={selectedTicket.internal_notes || ''}
-                onChange={(e) =>
-                  updateTicket(selectedTicket.id || selectedTicket._id, { internal_notes: e.target.value })
-                }
-                rows={4}
-                className="w-full border border-gray-200 rounded-md text-sm p-2"
-                placeholder="Add notes..."
-              />
-            </div>   
-            <div>
-            <div className="mt-6 pt-4 border-t border-gray-100 flex justify-end">
               <button
-                onClick={() => handleDelete(selectedTicket.id)}
-                className="text-sm font-medium text-red-600 border border-red-200 px-3 py-1.5 rounded-md hover:bg-red-50 hover:border-red-300 transition"
+                onClick={() => setSelectedId(null)}
+                className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full text-xl leading-none text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-700"
+                aria-label="Close"
               >
-                Delete ticket
+                ×
               </button>
-            </div>
+
+              <h3 className="mb-5 pr-10 text-lg font-semibold tracking-tight text-zinc-900">
+                {selectedTicket.name}
+              </h3>
+
+              <div className="mb-5">
+                <p className="mb-1.5 text-xs font-medium text-zinc-500">
+                  Description
+                </p>
+                <p className="whitespace-pre-wrap rounded-lg bg-zinc-50 p-3 text-sm leading-relaxed text-zinc-700">
+                  {selectedTicket.description}
+                </p>
+              </div>
+
+              <div>
+                <p className="mb-1.5 text-xs font-medium text-zinc-500">
+                  Notes
+                </p>
+                <textarea
+                  value={selectedTicket.internal_notes || ''}
+                  onChange={(e) =>
+                    updateTicket(selectedTicket.id || selectedTicket._id, { internal_notes: e.target.value })
+                  }
+                  rows={4}
+                  className="w-full rounded-lg border border-zinc-200 p-3 text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition hover:border-zinc-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+                  placeholder="Add notes..."
+                />
+              </div>
+              <div>
+                <div className="mt-6 flex justify-end border-t border-zinc-100 pt-4">
+                  <button
+                    onClick={() => handleDelete(selectedTicket.id)}
+                    className="rounded-md border border-red-200 px-3 py-1.5 text-sm font-medium text-red-600 transition hover:border-red-300 hover:bg-red-50"
+                  >
+                    Delete ticket
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-[0_-2px_8px_rgba(0,0,0,0.05)] z-40">
-        <div className="max-w-7xl mx-auto px-8 py-3 flex justify-end">
-          <button
-            onClick={handleSave}
-            disabled={saving || pendingIds.size === 0}
-            className="bg-blue-600 text-white px-5 py-2 rounded-md text-sm font-semibold hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
-          >
-            {saving ? 'Saving...' : `Save Changes${pendingIds.size > 0 ? ` (${pendingIds.size})` : ''}`}
-          </button>
+        <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-zinc-200 bg-white/80 backdrop-blur">
+          <div className="mx-auto flex max-w-7xl justify-end px-8 py-3">
+            <button
+              onClick={handleSave}
+              disabled={saving || pendingIds.size === 0}
+              className="rounded-lg bg-zinc-900 px-5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-400 disabled:shadow-none"
+            >
+              {saving ? 'Saving...' : `Save changes${pendingIds.size > 0 ? ` (${pendingIds.size})` : ''}`}
+            </button>
+          </div>
         </div>
       </div>
     </div>
