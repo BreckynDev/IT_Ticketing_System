@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { sql } from "../db.js"
 import { sendTicketEmail } from '../mail.js';
+import { requireAuth } from "../middleware/auth.js";
 
 const router = Router();
 
@@ -18,9 +19,14 @@ router.post('/', async (req, res) => {
         VALUES(${name}, ${email}, ${room}, ${category}, ${description})
         RETURNING *
     `
-   await sendTicketEmail(req.body);
+    try {
+        await sendTicketEmail(ticket[0]);
     
-    res.status(201).json({ success: true, message: "Ticket created and email sent!" })
+    } catch (error) {
+        console.error("Error emailing ticket: ", error)
+    }
+    
+    res.status(201).json({ success: true, message: "Ticket Created", id: ticket[0].id })
 
     } catch (error) {
         console.error("Error creating ticket: ", error)
@@ -30,7 +36,7 @@ router.post('/', async (req, res) => {
 });
 
 // Get all Tickets
-router.get('/', async (req, res) => {
+router.get('/', requireAuth, async (req, res) => {
 
     try {
         const tickets = await sql `
@@ -45,7 +51,7 @@ router.get('/', async (req, res) => {
 })
 
 // Get one Ticket
-router.get('/:id', async (req, res) => {
+router.get('/:id', requireAuth, async (req, res) => {
     const { id } = req.params
     try {
         const ticket = await sql `
@@ -64,7 +70,7 @@ router.get('/:id', async (req, res) => {
 })
 
 // Update a ticket
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', requireAuth, async (req, res) => {
     const { id } = req.params
     const { status, priority, internal_notes} = req.body;
     try {
@@ -94,7 +100,7 @@ router.patch('/:id', async (req, res) => {
 })
 
 // remove a ticket
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', requireAuth, async (req, res) => {
     const { id } = req.params
 
     try {

@@ -15,7 +15,7 @@ export async function initDB() {
       category VARCHAR(255) NOT NULL,
       description VARCHAR(255) NOT NULL,
       priority VARCHAR(255),
-      status VARCHAR(255) DEFAULT 'open',
+      status VARCHAR(255) DEFAULT 'Open',
       internal_notes VARCHAR(255),
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       resolved_at TIMESTAMP

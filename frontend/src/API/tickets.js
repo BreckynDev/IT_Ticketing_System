@@ -6,7 +6,6 @@ export async function getTickets() {
     if (!result.success) {
         throw new Error(result.message || "Failed to fetch tickets")
     }
-    console.log(result)
     return result.data
 }   
 
@@ -20,8 +19,7 @@ export async function createTicket(ticketData) {
     if (!result.success) {
         throw new Error(result.message || "Failed to create ticket")
     }
-    console.log(result)
-    return result.data
+    return result.id
 }
 
 export async function updateTicket(id, ticketData) {
@@ -35,4 +33,12 @@ export async function updateTicket(id, ticketData) {
         throw new Error(result.message || "Failed to update ticket")
     }
     return result.data
+}
+
+export async function deleteTicket(id) {
+    const res = await fetch(`${API_URL}/tickets/${id}`, { method: "DELETE" })
+    const result = await res.json()
+    if (!result.success) {
+        throw new Error(result.message || "Failed to delete ticket")
+    }
 }

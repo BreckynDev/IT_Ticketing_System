@@ -1,10 +1,10 @@
 import { useState, useEffect, useMemo } from 'react'
-import { getTickets, updateTicket as updateTicketApi } from '../api/tickets'
+import { getTickets, updateTicket as updateTicketApi, deleteTicket } from '../api/tickets'
 
 const PRIORITY_OPTIONS = ['Low', 'Medium', 'High', 'Urgent']
 const STATUS_OPTIONS = ['Open', 'Closed']
 
-const TRACKED_FIELDS = ['status', 'priority', 'notes']
+const TRACKED_FIELDS = ['status', 'priority', 'internal_notes']
 
 function formatDate(value) {
   if (!value) return '—'
@@ -66,6 +66,19 @@ function Admin() {
     )
   }
 
+ async function handleDelete(id) {
+  try {
+      await deleteTicket(id)
+      setTicketData((prev) =>
+        prev.filter((ticket) =>
+          (ticket.id || ticket._id) !== id
+        )
+      )
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   function handleFilterChange(field, value) {
     setFilters((prev) => ({ ...prev, [field]: value }))
   }
@@ -95,7 +108,7 @@ function Admin() {
           return updateTicketApi(id, {
             status: ticket.status,
             priority: ticket.priority,
-            notes: ticket.notes,
+            internal_notes: ticket.internal_notes,
           })
         })
       )
@@ -304,14 +317,24 @@ function Admin() {
                 Notes
               </p>
               <textarea
-                value={selectedTicket.notes || ''}
+                value={selectedTicket.internal_notes || ''}
                 onChange={(e) =>
-                  updateTicket(selectedTicket.id || selectedTicket._id, { notes: e.target.value })
+                  updateTicket(selectedTicket.id || selectedTicket._id, { internal_notes: e.target.value })
                 }
                 rows={4}
                 className="w-full border border-gray-200 rounded-md text-sm p-2"
                 placeholder="Add notes..."
               />
+            </div>   
+            <div>
+            <div className="mt-6 pt-4 border-t border-gray-100 flex justify-end">
+              <button
+                onClick={() => handleDelete(selectedTicket.id)}
+                className="text-sm font-medium text-red-600 border border-red-200 px-3 py-1.5 rounded-md hover:bg-red-50 hover:border-red-300 transition"
+              >
+                Delete ticket
+              </button>
+            </div>
             </div>
           </div>
         </div>

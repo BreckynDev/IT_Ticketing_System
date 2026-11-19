@@ -112,7 +112,7 @@ if (submitted) {
           <label className="text-sm font-medium text-gray-700">Enter Room: </label>
           <input
             type="text"
-            placeholder="Room 123"
+            placeholder="123"
             value={room}
             onChange={(e) => setRoom(e.target.value)}
             className="p-2 w-full border border-gray-300 rounded-lg transition focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
