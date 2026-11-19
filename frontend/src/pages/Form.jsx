@@ -167,7 +167,14 @@ if (submitted) {
         )}
         </button>
         
-        
+        <div className="text-center pt-1">
+            <a
+              href="/admin"
+              className="text-xs text-gray-400 hover:text-gray-600 transition"
+            >
+              Admin Portal
+            </a>
+          </div>
       </form>
     </div>
   )
