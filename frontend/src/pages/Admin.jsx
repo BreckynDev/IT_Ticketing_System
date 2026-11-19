@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { getTickets, updateTicket as updateTicketApi, deleteTicket, loginAdmin, getToken } from '../api/tickets'
+import { getTickets, updateTicket as updateTicketApi, deleteTicket, loginAdmin, getToken } from './api/tickets.js'
 
 const PRIORITY_OPTIONS = ['Low', 'Medium', 'High', 'Urgent']
 const STATUS_OPTIONS = ['Open', 'Closed']
