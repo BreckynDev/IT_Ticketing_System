@@ -2,11 +2,12 @@ import { Router } from "express";
 import { sql } from "../db.js"
 import { sendTicketEmail } from '../mail.js';
 import { requireAuth } from "../middleware/auth.js";
+import { createTicketLimiter } from "../middleware/rateLimit.js";
 
 const router = Router();
 
 // Create Ticket
-router.post('/', async (req, res) => {
+router.post('/', createTicketLimiter, async (req, res) => {
   const { name, email, room, category, description} = req.body;
 
   if (!name || !email || !room || !category || !description) {

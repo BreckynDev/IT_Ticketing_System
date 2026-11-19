@@ -7,10 +7,26 @@ import auth_routes from "./routes/auth.js";
 
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000; 
+
+app.set("trust proxy", 1)
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "http://localhost:5173",
+].filter(Boolean);
 
 app.use(express.json());
-app.use(cors());    
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
+  })
+);
+
 app.use('/tickets', ticket_routes);
 app.use('/auth', auth_routes);
 

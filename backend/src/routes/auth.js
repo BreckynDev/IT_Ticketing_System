@@ -2,6 +2,7 @@ import { Router } from "express";
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt";
 import dotenv from "dotenv"
+import { loginLimiter } from "../middleware/rateLimit.js";
 dotenv.config()
 
 const router = Router();
@@ -13,7 +14,7 @@ if (!adminPasswordHash || !jwtSecret) {
   throw new Error("Missing ADMIN_PASSWORD_HASH or JWT_SECRET in environment variables.");
 }
 
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
   const { password } = req.body
 
   if (typeof password !== "string" || password.length === 0) {
