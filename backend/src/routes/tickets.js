@@ -8,32 +8,28 @@ const router = Router();
 
 // Create Ticket
 router.post('/', createTicketLimiter, async (req, res) => {
-  const { name, email, room, category, description} = req.body;
+  const { name, email, room, category, description } = req.body;
 
   if (!name || !email || !room || !category || !description) {
-    return res.status(400).json({ success: false, message: "Missing required fields" })
+    return res.status(400).json({ success: false, message: "Missing required fields" });
   }
 
   try {
     const ticket = await sql`
-        INSERT INTO tickets (name, email, room, category, description)
-        VALUES(${name}, ${email}, ${room}, ${category}, ${description})
-        RETURNING *
-    `
-    try {
-        await sendTicketEmail(ticket[0]);
-    
-    } catch (error) {
-        console.error("Error emailing ticket: ", error)
-    }
-    
-    res.status(201).json({ success: true, message: "Ticket Created", id: ticket[0].id })
+      INSERT INTO tickets (name, email, room, category, description)
+      VALUES (${name}, ${email}, ${room}, ${category}, ${description})
+      RETURNING *
+    `;
 
-    } catch (error) {
-        console.error("Error creating ticket: ", error)
-        res.status(500).json({ success: false, message: "Internal Server Error" })
-    }
+    res.status(201).json({ success: true, message: "Ticket Created", id: ticket[0].id });
 
+    sendTicketEmail(ticket[0]).catch((error) => {
+      console.error("Error emailing ticket:", error);
+    });
+  } catch (error) {
+    console.error("Error creating ticket:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
 });
 
 // Get all Tickets
